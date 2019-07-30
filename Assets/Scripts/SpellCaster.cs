@@ -84,7 +84,7 @@ public class SpellCaster : MonoBehaviour
                         spellLine.SetPosition(1, hit.point);
                         if(hit.rigidbody != null)
                         {
-                            hit.rigidbody.AddForce(-hit.normal * hitForce);
+                            hit.rigidbody.AddForce(-hit.normal * currentSpell.getPower());
                             hit.transform.GetComponent<HealthHandler>().ChangeHP(currentSpell.getDamage());
                         }
                     }
