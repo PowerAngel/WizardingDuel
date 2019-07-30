@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR;
-
+using MathNet.Numerics;
+using MathNet.Numerics.LinearAlgebra;
+using MathNet;
 // Check Examples
 
 // Compiler version 4.0, .NET Framework 4.5
@@ -23,6 +25,9 @@ public class Aff3d
     private Vector3 trans;
     public Aff3d()
     {
+        
+        
+        
 
     }
        public Aff3d(float x, float y, float z, float ex, float ey, float ez)
