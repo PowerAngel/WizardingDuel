@@ -4,6 +4,7 @@ using UnityEngine;
 using Valve.VR;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics;
+using System;
 public class TrajectoryMatcher
 {
     public TrajectoryMatcher()
@@ -38,6 +39,7 @@ public class TrajectoryMatcher
         Matrix<double> matrix = target.Transpose()* src;
 
         var solved = matrix.Svd(true);
+
         Matrix<double> V = solved.VT.Transpose();
         Matrix<double> R = V*solved.U.Transpose();
         double det = R.Determinant();
@@ -52,6 +54,8 @@ public class TrajectoryMatcher
             R = V * solved.U.Transpose();
         }
         Vector<double> tr = c0 - R.Transpose() * c1;
+        
+        
         //Vector3 pos = 
         
 
@@ -64,7 +68,7 @@ public class TICPMatcher : TrajectoryMatcher
 {
     public TICPMatcher()
     {
-
+        Debug.Log("constructor matcher");
     }
     void TimeProjectionCorrespondance(Trajectory target, Trajectory source)
     {
@@ -76,6 +80,10 @@ public class TICPMatcher : TrajectoryMatcher
         
         score = 0;
         T = Aff3d.Identity();
+        Debug.Log("matched");
+        
+
+        
         return true;
 
         

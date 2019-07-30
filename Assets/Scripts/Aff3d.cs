@@ -74,9 +74,9 @@ public class Aff3d
     
    
        public override string ToString(){ //format rotation andtranslation to a string and return
-        string tmp = "testar!!!";
+        Vector3 eul = rot.eulerAngles.normalized;
+        string tmp = trans.x+", "+trans.y+ ","+trans.z+ ","+eul.x+", "+eul.x+", "+eul.z;
         return tmp;
-
        }
 
 
