@@ -11,12 +11,12 @@ public class Trajectory
         poses_ = new List<Aff3d>();
 
     }
-    public Trajectory(string path):this()
-        
+    public Trajectory(string path) : this()
+
     { //load trajectory from text file. file contain a number of poses each separated by a new line. each pose is represented by 6 values, x y z ex ey ez>
       //load poses from file	
     }
-    public void push_back( Aff3d T)
+    public void push_back(Aff3d T)
     {
         Debug.Log("adding : " + T.ToString());
         poses_.Add(T);
@@ -31,9 +31,21 @@ public class Trajectory
     {
         get { return poses_.Count; }
     }
-    public Matrix<double>{
+    public Matrix<double> PositionMatrix(){
 
-        Matrix<double> m = Matrix<double>.Build.Random(target.Size, 3);
+        Matrix<double> m = Matrix<double>.Build.Random(this.Size, 3);
+        for(int i = 0; i < this.Size; i++){
+            Vector<double> vi = Vector<double>.Build.Dense(3);
+            vi[0] = poses_[i].Translation.x;
+            vi[1] = poses_[i].Translation.y;
+            vi[2] = poses_[i].Translation.z;
+            m.SetRow(i, vi);
+        }
+        return m;
+
+}
+
+        
     private double min( uint dim)
     { //returns the value of the aff3d which has the smallest number om the dim axis (x = dim 0, y=dim1 z = dim 2)
         double xmin = double.MaxValue;
