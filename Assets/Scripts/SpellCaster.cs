@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Valve.VR;
 
 public class SpellCaster : MonoBehaviour
@@ -11,27 +12,42 @@ public class SpellCaster : MonoBehaviour
 
     private bool hasGrabed = false;
 
+    public Material[] myMaterials = new Material[5];
+
     public float fireRate = 2f;
     public float weaponRange = 100f;
     public float hitForce = 500f;
     public Transform wandEnd;
+    public Text spellName;
 
     private WaitForSeconds spellDuration = new WaitForSeconds(0.07f);
+    private WaitForSeconds spellnameDuration = new WaitForSeconds(1.5f);
 
     private AudioSource spellAudio;
     private LineRenderer spellLine;
     private float nextFire;
+    private System.Random random;
+
+    private Spell[] spells = new Spell[5];
+    private Spell currentSpell;
 
     // Start is called before the first frame update
     void Start()
     {
         spellLine = GetComponent<LineRenderer>();
         spellAudio = GetComponent<AudioSource>();
+
+        spells[0] = new Spell("Avada Kedavra", 10, 100, myMaterials[0]);
+        spells[1] = new Spell("Stupify", 750, 10, myMaterials[1]);
+        spells[2] = new Spell("Sectum Sempra", 100, 66, myMaterials[2]);
+        spells[3] = new Spell("Confringo", 5000, 50, myMaterials[3]);
+        spells[4] = new Spell("Episkey", 25, -25, myMaterials[4]);
     }
 
     // Update is called once per frame
     void Update()
     {
+
         if (GetGrab())
         {
             hasGrabed = true;
@@ -44,7 +60,16 @@ public class SpellCaster : MonoBehaviour
                 {
                     nextFire = Time.time + fireRate;
 
+                    random = new System.Random();
+
+                    currentSpell = spells[random.Next(0, spells.Length)];
+
+                    //spellLine.material = myMaterials[random.Next(0, myMaterials.Length)];
+                    spellLine.material = currentSpell.getMaterial();
+                    spellName.text = currentSpell.getName();
+
                     StartCoroutine(SpellEffect());
+                    StartCoroutine(ShowSpellName());
 
                     Vector3 rayOrigin = wandEnd.transform.position;
 
@@ -60,6 +85,7 @@ public class SpellCaster : MonoBehaviour
                         if(hit.rigidbody != null)
                         {
                             hit.rigidbody.AddForce(-hit.normal * hitForce);
+                            hit.transform.GetComponent<HealthHandler>().ChangeHP(currentSpell.getDamage());
                         }
                     }
                     else
@@ -80,6 +106,13 @@ public class SpellCaster : MonoBehaviour
         yield return spellDuration;
 
         spellLine.enabled = false;
+    }
+
+    private IEnumerator ShowSpellName()
+    {
+        yield return spellnameDuration;
+        spellName.text = "";
+
     }
 
     public bool GetTeleportDown()
