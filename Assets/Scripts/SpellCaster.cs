@@ -38,9 +38,9 @@ public class SpellCaster : MonoBehaviour
         spellAudio = GetComponent<AudioSource>();
 
         spells[0] = new Spell("Avada Kedavra", 10, 100, myMaterials[0]);
-        spells[1] = new Spell("Stupify", 750, 10, myMaterials[1]);
+        spells[1] = new Spell("Stupify", 150, 10, myMaterials[1]);
         spells[2] = new Spell("Sectum Sempra", 100, 66, myMaterials[2]);
-        spells[3] = new Spell("Confringo", 5000, 50, myMaterials[3]);
+        spells[3] = new Spell("Confringo", 200, 50, myMaterials[3]);
         spells[4] = new Spell("Episkey", 25, -25, myMaterials[4]);
     }
 
