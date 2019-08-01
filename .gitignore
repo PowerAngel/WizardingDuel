@@ -32,3 +32,6 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+ProjectSettings/ProjectVersion\.txt
+
+Assets/SteamVR/Resources/SteamVR_Settings\.asset\.meta
