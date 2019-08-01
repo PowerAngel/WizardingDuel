@@ -88,6 +88,7 @@ public class TrajectoryMatcher : MonoBehaviour
         
 
     }
+    
     private double score_th_success_;
     
 
@@ -112,14 +113,10 @@ public class TICPMatcher : TrajectoryMatcher
         //Debug.Log("matched");
         Matrix<double> tar = target.PositionMatrix();
         Matrix<double> src = source.PositionMatrix();
-      /*  for (int i = 0; i < tar.RowCount; i++)
-        {
-            //Debug.Log("tar: "+tar[i,0]+" "+ tar[i,1]+" "+tar[i,2]);
-            Debug.Log("tar= " + tar.Row(i)[0]+ " " + tar.Row(i)[1] + " " + tar.Row(i)[2]);
-            Debug.Log("src: "+src[i, 0] + " " + src[i, 1] + " " + src[i, 2]);
-        }*/
-        //Debug.Log("tar size:" + tar.RowCount + " x " + tar.ColumnCount);
-        //Debug.Log("src size:" + src.RowCount + " x " + src.ColumnCount);
+        for(int i = 0; i < src.RowCount; i++){
+            
+
+        }
         SVDAlign(tar,  src, ref T);
 
 
