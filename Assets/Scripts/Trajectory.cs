@@ -8,7 +8,7 @@ using System.IO;
 using System;
 using System.Globalization;
 
-public class Trajectory
+public class Trajectory //: MonoBehaviour
 {
     public Trajectory()
     {

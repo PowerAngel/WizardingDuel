@@ -35,12 +35,12 @@ public class TrajectoryMatcher
             c0 += target.Row(i);
             c1 += source.Row(i);
         }
-        Debug.Log("c0: " + c0.ToString());
-        Debug.Log("c1: " + c1.ToString());
+        //Debug.Log("c0: " + c0.ToString());
+        //Debug.Log("c1: " + c1.ToString());
 
         c0 *= (1.0 / ((double)target.RowCount)); //normalize
         c1 *= (1.0 / ( (double)target.RowCount));
-        Debug.Log("c0: "+c0[0]+" " + c0[1]+ " "+c0[2]);
+        //Debug.Log("c0: "+c0[0]+" " + c0[1]+ " "+c0[2]);
 
         Matrix<double> tar = target;
         Matrix<double> src = source;
