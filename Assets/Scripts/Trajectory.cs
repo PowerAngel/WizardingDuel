@@ -4,18 +4,27 @@ using UnityEngine;
 using Valve.VR;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics;
+using System.IO;
+using System;
+using System.Globalization;
+
 public class Trajectory
 {
     public Trajectory()
     {
         poses_ = new List<Aff3d>();
-
     }
     public Trajectory(string path) : this()
-
     { //load trajectory from text file. file contain a number of poses each separated by a new line. each pose is represented by 6 values, x y z ex ey ez>
-      //load poses from file	
+      //load poses from file
+        ReadPosesFromFile(path);
     }
+
+    public List<Aff3d> GetTrajectory()
+    {
+        return poses_;
+    }
+
     public void push_back(Aff3d T)
     {
         //Debug.Log("adding : " + T.ToString());
@@ -75,6 +84,34 @@ public class Trajectory
     static public double Distance(Trajectory target, Trajectory src) //not needed atm
     {
         return 0;
+    }
+
+    private void ReadPosesFromFile(string path)
+    {
+        try
+        {
+            using (StreamReader sr = new StreamReader(path))
+            {
+                string line;
+                Debug.Log("starting while loop");
+                while((line = sr.ReadLine()) != null)
+                {
+                    string[] values = line.Split(' ');
+                    float x = float.Parse(values[0], CultureInfo.InvariantCulture);
+                    float y = float.Parse(values[1], CultureInfo.InvariantCulture);
+                    float z = float.Parse(values[2], CultureInfo.InvariantCulture);
+                    float ex = float.Parse(values[3], CultureInfo.InvariantCulture);
+                    float ey = float.Parse(values[4], CultureInfo.InvariantCulture);
+                    float ez = float.Parse(values[5], CultureInfo.InvariantCulture);
+                    Aff3d aff3d = new Aff3d(x, y, z, ex, ey, ez);
+                    poses_.Add(aff3d);
+                }             
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.Log("Could not read file: " + path + ". Error: " + e);
+        }
     }
 
     private List<Aff3d> poses_;
