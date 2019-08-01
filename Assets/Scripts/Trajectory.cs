@@ -18,7 +18,7 @@ public class Trajectory
     }
     public void push_back(Aff3d T)
     {
-        Debug.Log("adding : " + T.ToString());
+        //Debug.Log("adding : " + T.ToString());
         poses_.Add(T);
         //add T to poses
     }

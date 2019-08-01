@@ -96,7 +96,50 @@ public class Aff3d
        return T3;
    }
 
-
+public static Quaternion RotToQuaternion(Matrix<double> rot)
+    {
+        if (rot.RowCount != 3 || rot.ColumnCount != 3)
+        {
+            Debug.LogError("error, dimensions of rotation incorrect");
+        }
+        double tr = rot[0, 0] + rot[1, 1] + rot[2, 2];
+        double qw, qx, qy, qz;
+        if (tr > 0)
+        {
+            double S = Mathf.Sqrt((float)(tr + 1.0)) * 2; // S=4*qw 
+            qw = 0.25 * S;
+            qx = (rot[2, 1] - rot[1, 2]) / S;
+            qy = (rot[0, 2] - rot[2, 0]) / S;
+            qz = (rot[1, 0] - rot[0, 1]) / S;
+        }
+        else if ((rot[0, 0] > rot[1, 1]) & (rot[0, 0] > rot[2, 2]))
+        {
+            double S = Mathf.Sqrt((float)(1.0 + rot[0, 0] - rot[1, 1] - rot[2, 2]) ) * 2; // S=4*qx 
+            qw = (rot[2, 1] - rot[1, 2]) / S;
+            qx = 0.25 * S;
+            qy = (rot[0, 1] + rot[1, 0]) / S;
+            qz = (rot[0, 2] + rot[2, 0]) / S;
+        }
+        else if (rot[1, 1] > rot[2, 2])
+        {
+            double S = Mathf.Sqrt((float)(1.0 + rot[1, 1] - rot[0, 0] - rot[2, 2])) * 2; // S=4*qy
+            qw = (rot[0, 2] - rot[2, 0]) / S;
+            qx = (rot[0, 1] + rot[1, 0]) / S;
+            qy = 0.25 * S;
+            qz = (rot[1, 2] + rot[2, 1]) / S;
+        }
+        else
+        {
+            
+            double S = Mathf.Sqrt( (float)(1.0 + rot[2, 2] - rot[0, 0] - rot[1, 1]) ) * 2; // S=4*qz
+            qw = (rot[1, 0] - rot[0, 1]) / S;
+            qx = (rot[0, 2] + rot[2, 0]) / S;
+            qy = (rot[1, 2] + rot[2, 1]) / S;
+            qz = 0.25 * S;
+        }
+            Quaternion q = new Quaternion((float)qx, (float)qy, (float)qz, (float)qw);
+            return q;
+    }
    // Add get and set to return rot and translation
 
    //define * operator for Aff3d and Vector3d

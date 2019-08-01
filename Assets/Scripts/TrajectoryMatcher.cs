@@ -17,43 +17,54 @@ public class TrajectoryMatcher
         score = 0;
         return true;
     }
-    public void SVDAlign(in Matrix<double> target, ref Matrix<double> src, ref Aff3d T) //target
+    public void SVDAlign(in Matrix<double> target,  Matrix<double> source, ref Aff3d T) //target
     {
         
-        if(target.RowCount != src.RowCount)
+        if(target.RowCount != source.RowCount)
         {
             //ERROR
+            Debug.LogError("Rows in matrices not consistent inside alignment");
             return;
         }
 
         Vector<double> c0 = Vector<double>.Build.Dense(3);
         Vector<double> c1 = Vector<double>.Build.Dense(3);
+        
+        
         for (int i=0;i< target.RowCount; i++){ //calculate centroid
             c0 += target.Row(i);
-            c1 += src.Row(i);
+            c1 += source.Row(i);
         }
-        
+        Debug.Log("c0: " + c0.ToString());
+        Debug.Log("c1: " + c1.ToString());
+
         c0 *= (1.0 / ((double)target.RowCount)); //normalize
         c1 *= (1.0 / ( (double)target.RowCount));
+        Debug.Log("c0: "+c0[0]+" " + c0[1]+ " "+c0[2]);
+
+        Matrix<double> tar = target;
+        Matrix<double> src = source;
+        for(int i = 0; i < tar.RowCount; i++){
+            tar.SetRow(i, tar.Row(i) - c0);
+            src.SetRow(i, src.Row(i) - c1);
+        }
 
         Matrix<double> matrix = target.Transpose()* src;
-
+        
         var solved = matrix.Svd(true);
-
         Matrix<double> V = solved.VT.Transpose();
         Matrix<double> R = V*solved.U.Transpose();
         double det = R.Determinant();
 
-        double d = target[0, 0];
+        
 
-        if (det < 0.0)
-        {
-            // nneg++;
-
+        if (det < 0.0){
             V.SetColumn(2, V.Column(2) * -1.0); 
             R = V * solved.U.Transpose();
         }
-        Vector<double> tr = c0 - R.Transpose() * c1;
+        Vector<double> tr = c1 - R.Transpose() * c0;
+        Debug.Log("offset: " + tr.ToString());
+        
         
         
         //Vector3 pos = 
@@ -80,10 +91,22 @@ public class TICPMatcher : TrajectoryMatcher
         
         score = 0;
         T = Aff3d.Identity();
-        Debug.Log("matched");
-        
+        //Debug.Log("matched");
+        Matrix<double> tar = target.PositionMatrix();
+        Matrix<double> src = source.PositionMatrix();
+      /*  for (int i = 0; i < tar.RowCount; i++)
+        {
+            //Debug.Log("tar: "+tar[i,0]+" "+ tar[i,1]+" "+tar[i,2]);
+            Debug.Log("tar= " + tar.Row(i)[0]+ " " + tar.Row(i)[1] + " " + tar.Row(i)[2]);
+            Debug.Log("src: "+src[i, 0] + " " + src[i, 1] + " " + src[i, 2]);
+        }*/
+        //Debug.Log("tar size:" + tar.RowCount + " x " + tar.ColumnCount);
+        //Debug.Log("src size:" + src.RowCount + " x " + src.ColumnCount);
+        SVDAlign(tar,  src, ref T);
 
-        
+
+
+
         return true;
 
         
