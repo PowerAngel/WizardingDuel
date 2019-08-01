@@ -31,8 +31,25 @@ public class Trajectory //: MonoBehaviour
         poses_.Add(T);
         //add T to poses
     }
-    public void Normalize()
+    public void Transform(Aff3d Toffset)
     {
+        List<Aff3d> poses_offset = new List<Aff3d>();
+        foreach(Aff3d p in poses_)
+        {
+            Aff3d T = Toffset * p;
+            poses_offset.Add(T);
+            
+        }
+        poses_ = poses_offset;
+    }
+    public void Normalize(){
+        Vector3 pmin = new Vector3( (float)Min(0), (float)Min(1), (float)Min(2));
+        Vector3 pmax = new Vector3((float)Max(0), (float)Max(1), (float)Max(2));
+
+        //subtract the mean position from all poses
+        //divide all points by (pmax-pmin)
+
+
 
 
     }
@@ -51,26 +68,41 @@ public class Trajectory //: MonoBehaviour
             m.SetRow(i, vi);
         }
         return m;
-
 }
 
         
-    private double min( uint dim)
+    private double Min( int dim)
     { //returns the value of the aff3d which has the smallest number om the dim axis (x = dim 0, y=dim1 z = dim 2)
+        if(dim<0 ||dim > 2)
+        {
+            Debug.LogWarning("wrong dim");
+            return 0;
+        }
         double xmin = double.MaxValue;
-        //find smallest
+        foreach( Aff3d p in poses_){
+            if (p.Translation[dim] < xmin)
+                xmin = p.Translation[dim];
+        }
         return xmin;
     }
-    private double max( uint dim)
+    private double Max( int dim)
     { //returns the value of the aff3d which has the largest number om the dim axis (x = dim 0, y=dim1 z = dim 2)
         double xmax = double.MinValue;
-        //find largest
+        foreach (Aff3d p in poses_)
+        {
+            if (p.Translation[dim] > xmax)
+                xmax = p.Translation[dim];
+        }
         return xmax;
     }
 
     private Vector3 mean()//get centroid, or equivalently, the mean value per of x y and z.	
     {
         Vector3 vek = new Vector3(0, 0, 0);
+        foreach(Aff3d p in poses_)
+            vek += p.Translation;
+
+        vek /= poses_.Count;
         return vek;
     }
     public override string ToString()

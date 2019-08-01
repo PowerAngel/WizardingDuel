@@ -12,13 +12,17 @@ public class GameCoordinator : MonoBehaviour
     void Start()
     {
         Targets = new List<GameObject>();
-        GameObject tempObject = Instantiate(myPrefab, new Vector3(-6.25f, 1.25f, -7), Quaternion.identity);
 
+        // Plot Prof. Snape
+        GameObject tempObject = Instantiate(myPrefab, new Vector3(-6.25f, 1.25f, -7), Quaternion.identity);
         Vector3 direction = tempObject.transform.position - Camera.main.transform.position;
         tempObject.transform.rotation = Quaternion.LookRotation(direction);
-
         Targets.Add(tempObject);
 
+
+
+
+        /* //Plot Trajecotry
         Trajectory trajectoryA = new Trajectory("data/wand_SmallHeart.txt");
         List<Aff3d> posesA_ = trajectoryA.GetTrajectory();
 
@@ -40,7 +44,7 @@ public class GameCoordinator : MonoBehaviour
             Vector3 rotation = pose.Rotation.eulerAngles;
             gameObject.transform.rotation = Quaternion.Euler(rotation);
         }
-
+        */
 
     }
 

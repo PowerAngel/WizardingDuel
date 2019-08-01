@@ -5,17 +5,38 @@ using Valve.VR;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics;
 using System;
-public class TrajectoryMatcher
+public class TrajectoryMatcher : MonoBehaviour
 {
-    public TrajectoryMatcher()
+    public TrajectoryMatcher() 
     {
-
+        //spellParticlePlot = new GameObject();
     }
     public virtual bool Match(Trajectory target, Trajectory source, out Aff3d T, out double score)
     {
         T = Aff3d.Identity();
         score = 0;
         return true;
+    }
+    /*public void SetGameObj(ref GameObject go)
+    {
+        spellParticlePlot = go;
+    }*/
+    public void TestPlot()
+    {
+
+        //private GameObject[] Targets;
+
+
+
+        /*        GameObject tempObject = Instantiate(myPrefab, new Vector3(-6.25f, 1.25f, -7), Quaternion.identity);
+
+                Vector3 direction = tempObject.transform.position - Camera.main.transform.position;
+                tempObject.transform.rotation = Quaternion.LookRotation(direction);
+
+                Targets.Add(tempObject);*/
+        
+
+ 
     }
     public void SVDAlign(in Matrix<double> target,  Matrix<double> source, ref Aff3d T) //target
     {
@@ -65,13 +86,10 @@ public class TrajectoryMatcher
         Vector<double> tr = c1 - R.Transpose() * c0;
         Debug.Log("offset: " + tr.ToString());
         
-        
-        
-        //Vector3 pos = 
-        
 
     }
     private double score_th_success_;
+    
 
 }
 
