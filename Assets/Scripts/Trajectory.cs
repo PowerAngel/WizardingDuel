@@ -43,8 +43,8 @@ public class Trajectory //: MonoBehaviour
         poses_ = poses_offset;
     }
     public void Normalize(){
-        Vector3 pmin = new Vector3((float)3, (float)7, (float)10);
-        Vector3 pmax = new Vector3((float)5, (float)6, (float)8);
+        Vector3 pmin = new Vector3((float)Min(0), (float)Min(1), (float)Min(2));
+        Vector3 pmax = new Vector3((float)Max(0), (float)Max(1), (float)Max(2));
 
         //subtract the mean position from all poses
 
