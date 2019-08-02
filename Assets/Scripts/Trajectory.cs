@@ -75,9 +75,11 @@ public class Trajectory //: MonoBehaviour
         }
     }
 
-    public bool GetClosest(float index, float window, ref Vector3 closest) //Finds the pose which has a position nearest "closest.  Return true if any pose was found, otherwise false. Index and window is currently not usefull!    index between 0 and 1, window in percentage of all poses
+    public int GetClosest(float index, float window, ref Vector3 target) //Returns index for the closest pose, in poses_, to target.
     {
+
         /* This is not usefull atm
+        * //Finds the pose which has a position nearest "closest.  Return true if any pose was found, otherwise false. Index and window is currently not usefull!    index between 0 and 1, window in percentage of all poses
         bool found = false;
         bool first = true;
         int i_idx = (int)(index / (float)poses_.Count);
@@ -87,7 +89,19 @@ public class Trajectory //: MonoBehaviour
 
             }
         }*/
-        return false;
+        //bool anyPoses = false;
+        Vector3 tmp = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+        int idx = -1;
+        for(int i = 0;  i < poses_.Count; i++){
+            if ((target - poses_[i].Translation).magnitude < tmp.magnitude)
+            {
+                tmp = target - poses_[i].Translation;
+                idx = i;
+            }
+        }
+        return idx;
+            
+        //return -1; //false, couldn't find any pose.
 
     }
     public int Size

@@ -9,6 +9,12 @@ public class WandMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+        Vector3 a = new Vector3(1, 2, 4);
+        Vector3 b = new Vector3(1, 2, 3);
+        Debug.Log("vectortes: " + a.magnitude.ToString());
+
+        /*
         Vector3 pmin = new Vector3((float)3, (float)7, (float)10);
         Vector3 pmax = new Vector3((float)5, (float)6, (float)8);
 
@@ -28,7 +34,7 @@ public class WandMovement : MonoBehaviour
         pmin /= n;
         pmax /= n;
         Debug.Log("pmin: " + pmin.ToString());
-        Debug.Log("pmax: " + pmax.ToString());
+        Debug.Log("pmax: " + pmax.ToString());*/
     }
 
     // Update is called once per frame
