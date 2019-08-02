@@ -75,8 +75,9 @@ public class Trajectory //: MonoBehaviour
         }
     }
 
-    public bool GetClosest(float index, float window, ref Vector3 closest) //index between 0 and 1, window in percentage of all poses
-    {/* This is not usefull atm
+    public bool GetClosest(float index, float window, ref Vector3 closest) //Finds the pose which has a position nearest "closest.  Return true if any pose was found, otherwise false. Index and window is currently not usefull!    index between 0 and 1, window in percentage of all poses
+    {
+        /* This is not usefull atm
         bool found = false;
         bool first = true;
         int i_idx = (int)(index / (float)poses_.Count);
