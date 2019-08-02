@@ -51,8 +51,8 @@ public class TestScript : MonoBehaviour
     Trajectory src = new Trajectory("data/wand_SmallHeart.txt");
     Trajectory target = new Trajectory("data/wand_LargeHeart.txt");
     Trajectory registered = new Trajectory("data/wand_SmallHeart.txt");
-        Aff3d Toffset = new Aff3d(0, 0, 0.5f, 0, 0, 0);
-        registered.Transform(Toffset);
+    Aff3d Toffset = new Aff3d(0, 0, 0.5f, 0, 0, 0);
+    registered.Transform(Toffset);
         
      Plot(target, src, registered);
 

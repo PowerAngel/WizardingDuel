@@ -47,6 +47,7 @@ public class Trajectory //: MonoBehaviour
         Vector3 pmax = new Vector3((float)5, (float)6, (float)8);
 
         //subtract the mean position from all poses
+
         //divide all points by (pmax-pmin)
 
         var meanPmin = (pmin[0] + pmin[1] + pmin[2]) / 3.0f;
@@ -59,6 +60,21 @@ public class Trajectory //: MonoBehaviour
         pmax /= n;
         Debug.Log("pmin: " + pmin.ToString());
         Debug.Log("pmax: " + pmax.ToString());
+
+    }
+
+    public bool GetClosest(float index, float window, ref Vector3 closest) //index between 0 and 1, window in percentage of all poses
+    {/*
+        bool found = false;
+        bool first = true;
+        int i_idx = (int)(index / (float)poses_.Count);
+        int i_win_size = (int)(window / (float)poses_.Count);
+        for(int i = i_idx - i_win_size; i <= i_idx + i_win_size; i++){
+            if(i<0 || i > poses_.Count){
+
+            }
+        }*/
+        return false;
 
     }
     public int Size
