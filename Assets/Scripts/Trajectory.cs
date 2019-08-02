@@ -93,7 +93,7 @@ public class Trajectory //: MonoBehaviour
         Vector3 tmp = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
         int idx = -1;
         for(int i = 0;  i < poses_.Count; i++){
-            if ((target - poses_[i].Translation).magnitude < tmp.magnitude)
+            if ((target - poses_[i].Translation).sqrMagnitude < tmp.sqrMagnitude)
             {
                 tmp = target - poses_[i].Translation;
                 idx = i;
