@@ -53,13 +53,8 @@ public class Trajectory //: MonoBehaviour
         var meanPmin = (pmin[0] + pmin[1] + pmin[2]) / 3.0f;
         var meanPmax = (pmax[0] + pmax[1] + pmax[2]) / 3.0f;
         var n = meanPmax - meanPmin;
-        Debug.Log("pmin: " + pmin.ToString());
-        Debug.Log("pmax: " + pmax.ToString());
-        Debug.Log("n: " + n.ToString());
         pmin /= n;
         pmax /= n;
-        Debug.Log("pmin: " + pmin.ToString());
-        Debug.Log("pmax: " + pmax.ToString());
 
     }
 
