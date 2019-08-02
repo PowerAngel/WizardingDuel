@@ -45,14 +45,15 @@ public class Trajectory //: MonoBehaviour
     public void Normalize(){
         Vector3 pmin = new Vector3((float)Min(0), (float)Min(1), (float)Min(2));
         Vector3 pmax = new Vector3((float)Max(0), (float)Max(1), (float)Max(2));
-        
+
 
         //subtract the mean position from all poses
+        //divide all poses by (pmax-pmin)
 
-        //divide all points by (pmax-pmin)
-
-        var meanPmin = (pmin[0] + pmin[1] + pmin[2]) / 3.0f;
+        /*var meanPmin = (pmin[0] + pmin[1] + pmin[2]) / 3.0f;
         var meanPmax = (pmax[0] + pmax[1] + pmax[2]) / 3.0f;
+
+        
         var n = meanPmax - meanPmin;
         Debug.Log("pmin: " + pmin.ToString());
         Debug.Log("pmax: " + pmax.ToString());
@@ -60,8 +61,23 @@ public class Trajectory //: MonoBehaviour
         pmin /= n;
         pmax /= n;
         Debug.Log("pmin: " + pmin.ToString());
-        Debug.Log("pmax: " + pmax.ToString());
+        Debug.Log("pmax: " + pmax.ToString());*/
+        Vector3 centroid_vek = new Vector3();
+        centroid_vek = mean();
+        foreach (Aff3d p in poses_){
+            p.Translation = p.Translation - centroid_vek;
+        }
 
+        Vector3 size_cloud = new Vector3();
+        size_cloud = pmax - pmin;
+        Vector3 tmp = new Vector3();
+        foreach (Aff3d p in poses_){
+            tmp = p.Translation;
+            tmp.x = tmp.x / size_cloud.x;
+            tmp.y = tmp.y / size_cloud.y;
+            tmp.z = tmp.z / size_cloud.z;
+            p.Translation = tmp;
+        }
     }
 
     public bool GetClosest(float index, float window, ref Vector3 closest) //index between 0 and 1, window in percentage of all poses
