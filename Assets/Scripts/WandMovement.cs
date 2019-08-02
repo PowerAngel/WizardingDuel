@@ -15,12 +15,17 @@ public class WandMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0))
         {
-            Debug.Log("pressed left click");
-            //var targetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector3 targetPos = Input.mousePosition;
+            
+            Debug.Log("pressed left click" + targetPos.ToString());
+            text.text = "mouse: " + targetPos.ToString();
+
+            //Vector3 targetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition); // kamerans position
+            //var targetPos = Event.current.mousePosition;
             //transform.position = targetPos;
-            //text.text = "Mousepos: " + targetPos.ToString();
         }
+
     }
 }
