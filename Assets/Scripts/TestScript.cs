@@ -59,23 +59,24 @@ public class TestScript : MonoBehaviour
     //spellParticlePlot = new GameObject();
 
     //Aff3d T = new Aff3d(0,0,0,0,0,0);
-    //TrajectoryMatcher tmatch = new TICPMatcher();
+    TrajectoryMatcher tmatch = new ICPMatcher();
 
 
 
-    /*
+    
     Trajectory traj1 = new Trajectory();
     Trajectory traj2 = new Trajectory();
    for (int i = 0; i < 10; i++){
         Aff3d T = new Aff3d(i, i, i, 0, 0, 0);
         traj1.push_back(T);
-        Aff3d T2 = new Aff3d(i+(float)0.5, i+(float)0.5, i + (float)0.5, 0, 0, 0);
+        Aff3d T2 = new Aff3d(i+(float)0.1, i+(float)0.1, i + (float)0.1, 0, 0, 0);
         traj2.push_back(T2);
-    }*/
+    }
     Aff3d Talign = new Aff3d();
+        
         double score = 0;
         
-        //tmatch.Match(traj1, traj2, out Talign, out score);
+      tmatch.Match(traj1, traj2, out Talign, out score);
         
 
 

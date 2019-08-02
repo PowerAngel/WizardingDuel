@@ -85,7 +85,9 @@ public class TrajectoryMatcher : MonoBehaviour
         }
         Vector<double> tr = c1 - R.Transpose() * c0;
         Debug.Log("offset: " + tr.ToString());
-        
+        Quaternion q = Aff3d.RotToQuaternion(R);
+        T.Rotation = q;
+        T.Translation = new Vector3((float)tr[0], (float) tr[1], (float)tr[2]);
 
     }
     
@@ -94,14 +96,32 @@ public class TrajectoryMatcher : MonoBehaviour
 
 }
 
-public class TICPMatcher : TrajectoryMatcher
+public class ICPMatcher : TrajectoryMatcher
 {
-    public TICPMatcher()
+    public ICPMatcher()
     {
         Debug.Log("constructor matcher");
     }
-    void TimeProjectionCorrespondance(Trajectory target, Trajectory source)
+    /*void TimeProjectionCorrespondance(Trajectory target, Trajectory source)
     {
+
+    }*/
+    void AssiciateByNearest(Trajectory target, Trajectory source, ref List<int> associations)
+    {
+        if (associations == null)
+            associations = new List<int>();
+        else
+            associations.Clear();
+        
+        for (int i = 0; i < source.Size; i++){   
+            int index = target.GetClosest(source.GetPose(i).Translation);
+            associations.Add(index);
+        }
+    }
+
+    public void FilterOutliers(ref List<int> ass_idx, float perc_outlirs)
+    {
+        
 
     }
 
@@ -111,17 +131,22 @@ public class TICPMatcher : TrajectoryMatcher
         score = 0;
         T = Aff3d.Identity();
         //Debug.Log("matched");
-        Matrix<double> tar = target.PositionMatrix();
-        Matrix<double> src = source.PositionMatrix();
-        for(int i = 0; i < src.RowCount; i++){
-            
+        
+        List<int> ass_idx = new List<int>();
+        AssiciateByNearest( target,  source, ref ass_idx);
+        FilterOutliers(ref ass_idx, 0.1f);
 
-        }
+        Matrix<double> tar = target.PositionMatrix(ass_idx, true);
+        Matrix<double> src = source.PositionMatrix(ass_idx, false);
+        Debug.Log("tar size: " + tar.ToString());
+        Debug.Log("src size: " + src.ToString());
+
         SVDAlign(tar,  src, ref T);
+        Debug.Log("MATCH OUTPUT: " + T.ToString());
+        source.Transform(T);
 
 
-
-
+        
         return true;
 
         

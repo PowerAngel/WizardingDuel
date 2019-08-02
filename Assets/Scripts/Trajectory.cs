@@ -75,7 +75,7 @@ public class Trajectory //: MonoBehaviour
         }
     }
 
-    public bool GetClosest(float index, float window, ref Vector3 closest) //Finds the pose which has a position nearest "closest.  Return true if any pose was found, otherwise false. Index and window is currently not usefull!    index between 0 and 1, window in percentage of all poses
+    public bool GetClosest(float index, float window, Vector3 closest) //Finds the pose which has a position nearest "closest.  Return true if any pose was found, otherwise false. Index and window is currently not usefull!    index between 0 and 1, window in percentage of all poses
     {
         /* This is not usefull atm
         bool found = false;
@@ -89,6 +89,23 @@ public class Trajectory //: MonoBehaviour
         }*/
         return false;
 
+    }
+    public int GetClosest( Vector3 closest) //Finds the pose which has a position nearest "closest.  Return true if any pose was found, otherwise false. 
+    {
+        /* This is not usefull atm
+        bool found = false;
+        bool first = true;
+        int i_idx = (int)(index / (float)poses_.Count);
+        int i_win_size = (int)(window / (float)poses_.Count);
+        for(int i = i_idx - i_win_size; i <= i_idx + i_win_size; i++){
+            if(i<0 || i > poses_.Count){
+
+            }
+        }*/
+        
+            int index = 5;
+            return index;
+        
     }
     public int Size
     {
@@ -106,6 +123,40 @@ public class Trajectory //: MonoBehaviour
         }
         return m;
 }
+    public Matrix<double> PositionMatrix(List<int> idx, bool select_by_indices = false) //returns a position matrix filtered from -1 indexes. if select by indices is true,  the values in idx will determine which elements to insert in the matrix
+    {
+        int size_m = 0;
+        foreach( int i in idx){
+            if (i != -1)
+                size_m++;
+        }
+        Matrix<double> m = Matrix<double>.Build.Random(size_m, 3);
+        int current_row = 0;
+        for (int i = 0; i < idx.Count; i++){
+            if (idx[i] == -1)
+                continue;
+            int point = i;
+            if (select_by_indices)
+                point = idx[i]; //use whats in the idx rather than just i
+           
+            Vector<double> vi = Vector<double>.Build.Dense(3);
+            vi[0] = poses_[point].Translation.x;
+            vi[1] = poses_[point].Translation.y;
+            vi[2] = poses_[point].Translation.z;
+            m.SetRow(current_row++, vi);
+        }
+        return m;
+    }
+
+    public Aff3d GetPose(int i)
+    {
+        if (i >= 0 && i < poses_.Count)
+        {
+            return poses_[i];
+        }
+        else return Aff3d.Identity();
+
+    }
 
         
     private double Min( int dim)
