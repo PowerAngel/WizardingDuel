@@ -62,7 +62,7 @@ public class Trajectory //: MonoBehaviour
         pmax /= n;
         Debug.Log("pmin: " + pmin.ToString());
         Debug.Log("pmax: " + pmax.ToString());
-
+        */
         Vector3 size_cloud = new Vector3();
         size_cloud = pmax - pmin;
         Vector3 tmp = new Vector3();
@@ -76,7 +76,7 @@ public class Trajectory //: MonoBehaviour
     }
 
     public bool GetClosest(float index, float window, ref Vector3 closest) //index between 0 and 1, window in percentage of all poses
-    {/*
+    {/* This is not usefull atm
         bool found = false;
         bool first = true;
         int i_idx = (int)(index / (float)poses_.Count);
