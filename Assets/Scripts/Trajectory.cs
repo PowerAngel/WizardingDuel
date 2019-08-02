@@ -61,12 +61,7 @@ public class Trajectory //: MonoBehaviour
         pmin /= n;
         pmax /= n;
         Debug.Log("pmin: " + pmin.ToString());
-        Debug.Log("pmax: " + pmax.ToString());*/
-        Vector3 centroid_vek = new Vector3();
-        centroid_vek = mean();
-        foreach (Aff3d p in poses_){
-            p.Translation = p.Translation - centroid_vek;
-        }
+        Debug.Log("pmax: " + pmax.ToString());
 
         Vector3 size_cloud = new Vector3();
         size_cloud = pmax - pmin;
