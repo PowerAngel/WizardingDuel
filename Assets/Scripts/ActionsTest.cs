@@ -15,8 +15,6 @@ public class ActionsTest : MonoBehaviour {
     private LineRenderer lineRenderer;
 
     private ArrayList positionsArray = new ArrayList();
-
-    ParticleSystem sparks;
     
     // Update is called once per frame
 
@@ -24,8 +22,6 @@ public class ActionsTest : MonoBehaviour {
     {
         //hand_writer = new WritePoses("hand.txt");
         wand_tip_writer = new WritePoses("wand.txt");
-        sparks = GetComponent<ParticleSystem>();
-        sparks.emissionRate = 500;
     }
 
     void Update () {
@@ -49,7 +45,6 @@ public class ActionsTest : MonoBehaviour {
         {
             print("Grab " + handType);
             //sparks.emissionRate = 500;
-            sparks.Play();
 
             /*float x = tansform.position.x;
             float y = transform.position.y;
@@ -90,13 +85,7 @@ public class ActionsTest : MonoBehaviour {
             {
                 print("wand_tip_writer is null");
             }
-        }
-        else
-        {
-            //sparks.emissionRate = 0;
-            sparks.Stop();
-        }
-        
+        }      
 	}
 
     public bool GetTeleportDown()
