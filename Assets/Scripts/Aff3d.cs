@@ -36,7 +36,7 @@ public class Aff3d
            trans[1] = y;
            trans[2] = z;
 
-           Vector3 rotationVector = new Vector3(ex, ey, ez);
+           Vector3 rotationVector = new Vector3(ex*180.0f/Mathf.PI, ey * 180.0f / Mathf.PI, ez*180.0f/Mathf.PI);
            rot = Quaternion.Euler(rotationVector);
     }
 
@@ -88,10 +88,10 @@ public class Aff3d
        return ident;
    }
 
-   public static Aff3d operator *(Aff3d T2, Aff3d T1)
+   public static Aff3d operator *(Aff3d T1, Aff3d T2)
    {
        Aff3d T3 = new Aff3d();
-       T3.Rotation = T2.Rotation * T1.Rotation;
+       T3.Rotation = T1.Rotation * T2.Rotation;
        T3.Translation = T1.Translation + T1.Rotation * T2.Translation;
        return T3;
    }

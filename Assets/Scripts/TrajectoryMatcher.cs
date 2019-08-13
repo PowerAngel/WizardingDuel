@@ -5,7 +5,7 @@ using Valve.VR;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics;
 using System;
-public class TrajectoryMatcher : MonoBehaviour
+public class TrajectoryMatcher 
 {
     public TrajectoryMatcher() 
     {
@@ -38,10 +38,10 @@ public class TrajectoryMatcher : MonoBehaviour
 
  
     }
-    public void SVDAlign(in Matrix<double> target,  Matrix<double> source, ref Aff3d T) //target
+    public void SVDAlign( Matrix<double> target,  Matrix<double> source, ref Aff3d T) //target
     {
         
-        if(target.RowCount != source.RowCount)
+        if(target.RowCount != source.RowCount || source.RowCount ==0)
         {
             //ERROR
             Debug.LogError("Rows in matrices not consistent inside alignment");
@@ -56,37 +56,49 @@ public class TrajectoryMatcher : MonoBehaviour
             c0 += target.Row(i);
             c1 += source.Row(i);
         }
-        //Debug.Log("c0: " + c0.ToString());
-        //Debug.Log("c1: " + c1.ToString());
-
         c0 *= (1.0 / ((double)target.RowCount)); //normalize
-        c1 *= (1.0 / ( (double)target.RowCount));
-        //Debug.Log("c0: "+c0[0]+" " + c0[1]+ " "+c0[2]);
+        c1 *= (1.0 / ((double)target.RowCount));
+
 
         Matrix<double> tar = target;
         Matrix<double> src = source;
-        for(int i = 0; i < tar.RowCount; i++){
+        
+        for (int i = 0; i < tar.RowCount; i++){
             tar.SetRow(i, tar.Row(i) - c0);
             src.SetRow(i, src.Row(i) - c1);
         }
+        //Debug.Log("NO CENTROID " + tar.ToString());
 
-        Matrix<double> matrix = target.Transpose()* src;
+        Matrix<double> H = tar.Transpose()* src;
         
-        var solved = matrix.Svd(true);
+        var solved = H.Svd(true);
         Matrix<double> V = solved.VT.Transpose();
-        Matrix<double> R = V*solved.U.Transpose();
+        Matrix<double> Vt = solved.VT;
+        Matrix<double> U = solved.U;
+        //Matrix<double> det_mat = Matrix<double>.Build.DenseIdentity(3,3);
+        //det_mat[2, 2] = (Vt.Transpose() * U.Transpose()).Determinant();
+        Matrix<double> R = Vt.Transpose()*U.Transpose();
+        
         double det = R.Determinant();
 
-        
-
         if (det < 0.0){
-            V.SetColumn(2, V.Column(2) * -1.0); 
-            R = V * solved.U.Transpose();
+            Vt.SetRow(2, -Vt.Row(2) );
+            //det_mat[2, 2] = (Vt.Transpose() * U.Transpose()).Determinant();
+            R = Vt.Transpose()  * U.Transpose();
+            //Debug.Log("Incorrect");
         }
-        Vector<double> tr = c1 - R.Transpose() * c0;
-        Debug.Log("offset: " + tr.ToString());
-        Quaternion q = Aff3d.RotToQuaternion(R);
+
+       // Debug.Log("correct");
+
+
+        Vector<double> tr = -(c1 - R * c0);
+        //Debug.Log("offset T: " + tr);
+        //Debug.Log("offset R: " + R.ToString());
+
+        Quaternion q = Aff3d.RotToQuaternion(R.Inverse());
+        q.Normalize();
         T.Rotation = q;
+        //Debug.Log("EULER R: " + q.eulerAngles.ToString());
         T.Translation = new Vector3((float)tr[0], (float) tr[1], (float)tr[2]);
 
     }
@@ -134,7 +146,10 @@ public class ICPMatcher : TrajectoryMatcher
         
         List<int> ass_idx = new List<int>();
         AssiciateByNearest( target,  source, ref ass_idx);
-        FilterOutliers(ref ass_idx, 0.1f);
+        Debug.Log("ASS:");
+        Debug.Log(ass_idx);
+        
+     //   FilterOutliers(ref ass_idx, 0.1f);
 
         Matrix<double> tar = target.PositionMatrix(ass_idx, true);
         Matrix<double> src = source.PositionMatrix(ass_idx, false);
@@ -143,7 +158,7 @@ public class ICPMatcher : TrajectoryMatcher
 
         SVDAlign(tar,  src, ref T);
         Debug.Log("MATCH OUTPUT: " + T.ToString());
-        source.Transform(T);
+        //source.Transform(T);
 
 
         

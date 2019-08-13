@@ -7,6 +7,10 @@ using MathNet.Numerics;
 using System.IO;
 using System;
 using System.Globalization;
+using MathNet.Numerics.LinearAlgebra.Factorization;
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Complex;
+
 
 public class Trajectory //: MonoBehaviour
 {
@@ -33,66 +37,95 @@ public class Trajectory //: MonoBehaviour
     }
     public void Transform(Aff3d Toffset)
     {
-        List<Aff3d> poses_offset = new List<Aff3d>();
-        foreach(Aff3d p in poses_)
+        for(int i=0;i<poses_.Count;i++)
         {
-            Aff3d T = Toffset * p;
-            poses_offset.Add(T);
-            
+            poses_[i] = Toffset * poses_[i];   
         }
-        poses_ = poses_offset;
     }
-    public void Normalize(){
+    public Trajectory GetTransformed(Aff3d Toffset)
+    { 
+        Trajectory transformed = new Trajectory();
+        foreach (Aff3d p in poses_)
+        {
+            transformed.push_back(Toffset * p);
+        }
+        return transformed;
+    }
+    public void Center(){
+        Vector3 centroid = mean();
+        foreach (Aff3d p in poses_)
+            p.Translation -= centroid;
+    }
+    public void RescaleByDimension()
+    {
         Vector3 pmin = new Vector3((float)Min(0), (float)Min(1), (float)Min(2));
         Vector3 pmax = new Vector3((float)Max(0), (float)Max(1), (float)Max(2));
-
-
-        //subtract the mean position from all poses
-        //divide all poses by (pmax-pmin)
-
-        /*var meanPmin = (pmin[0] + pmin[1] + pmin[2]) / 3.0f;
-        var meanPmax = (pmax[0] + pmax[1] + pmax[2]) / 3.0f;
-
-        
-        var n = meanPmax - meanPmin;
-        Debug.Log("pmin: " + pmin.ToString());
-        Debug.Log("pmax: " + pmax.ToString());
-        Debug.Log("n: " + n.ToString());
-        pmin /= n;
-        pmax /= n;
-        Debug.Log("pmin: " + pmin.ToString());
-        Debug.Log("pmax: " + pmax.ToString());
-        */
         Vector3 size_cloud = new Vector3();
         size_cloud = pmax - pmin;
         Vector3 tmp = new Vector3();
-        foreach (Aff3d p in poses_){
+        foreach (Aff3d p in poses_)
+        {
             tmp = p.Translation;
-            tmp.x = tmp.x / size_cloud.x;
-            tmp.y = tmp.y / size_cloud.y;
-            tmp.z = tmp.z / size_cloud.z;
+            tmp.x = 0.2f * tmp.x / size_cloud.x;
+            tmp.y = 0.2f * tmp.y / size_cloud.y;
+            tmp.z = 0.2f * tmp.z / size_cloud.z;
             p.Translation = tmp;
         }
     }
-
-    public bool GetClosest(float index, float window, Vector3 closest) //Finds the pose which has a position nearest "closest.  Return true if any pose was found, otherwise false. Index and window is currently not usefull!    index between 0 and 1, window in percentage of all poses
+    public void Rescale()
     {
-        /* This is not usefull atm
-        bool found = false;
-        bool first = true;
-        int i_idx = (int)(index / (float)poses_.Count);
-        int i_win_size = (int)(window / (float)poses_.Count);
-        for(int i = i_idx - i_win_size; i <= i_idx + i_win_size; i++){
-            if(i<0 || i > poses_.Count){
+        Center();
+         Matrix<double> A = PositionMatrix();
+         Matrix<double> cov = 1.0f / ((float)A.RowCount ) *A.Transpose() * A;
+        Evd<double> eigen = cov.Evd();
+        MathNet.Numerics.LinearAlgebra.Vector<System.Numerics.Complex> eigenvals = eigen.EigenValues;
+        double l1 = eigenvals[0].Real;//1 / Math.Sqrt(eigenvals[0].Real);
+        double l2 = eigenvals[1].Real;//1 / Math.Sqrt(eigenvals[1].Real);
+        double l3 = eigenvals[2].Real; // / Math.Sqrt(eigenvals[2].Real);
+        Debug.Log("l1: "+l1+", l2: "+l2+", l3: "+l3);
+        double vol = l1 * l2 * l3;
+        double max = eigenvals.AbsoluteMaximum().Real;
+        Debug.Log("max=" + max);
+        //double det = cov.Determinant();
 
-            }
-        }*/
-        return false;
+        A = A / Math.Sqrt( max)*0.2;
+        Debug.Log(A);
+        
+        //Debug.Log("determinant:");
+        for (int i = 0; i < A.RowCount; i++)
+        {
+            poses_[i].Translation = new Vector3((float)A[i, 0], (float)A[i, 1], (float)A[i, 2]);
+        }
+        
+
+
+        /* Matrix<double> A = PositionMatrix();
+         Matrix<double> cov = 1.0f / ((float)A.RowCount ) *A.Transpose() * A;
+
+         
+         Debug.Log(cov.ToString());
+         Evd<double> eigen = cov.Evd();
+         Matrix<double> m = eigen.EigenVectors;
+         Matrix<double> points = m * A * m.Inverse();
+
+         points = points * cov.Determinant() / 10;
+         points = m * points * m.Inverse();
+         for (int i = 0; i < points.RowCount; i++)
+         {
+             poses_[i].Translation =new Vector3((float)points[i, 0], (float)points[i, 1], (float)points[i, 2]);
+         }*/
+        /*double det = cov.Determinant();
+        cov_rotated = cov_rotated / det;
+        Matrix<double> cov_recovered = m * cov_rotated * m.Inverse();*/
+        //Debug.Log(cov_recovered.ToString());
+
 
     }
-    public int GetClosest( Vector3 closest) //Finds the pose which has a position nearest "closest.  Return true if any pose was found, otherwise false. 
+
+    public int GetClosest(float index, float window, ref Vector3 target) //Returns index for the closest pose, in poses_, to target.
     {
         /* This is not usefull atm
+        * //Finds the pose which has a position nearest "closest.  Return true if any pose was found, otherwise false. Index and window is currently not usefull!    index between 0 and 1, window in percentage of all poses
         bool found = false;
         bool first = true;
         int i_idx = (int)(index / (float)poses_.Count);
@@ -102,10 +135,21 @@ public class Trajectory //: MonoBehaviour
 
             }
         }*/
-        
-            int index = 5;
-            return index;
-        
+        //bool anyPoses = false;
+        return 0;
+ 
+    }
+    public int GetClosest( Vector3 target) //Finds the pose which has a position nearest "closest.  Return true if any pose was found, otherwise false. 
+    {
+        Vector3 tmp = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+        int idx = -1;
+        for (int i = 0; i < poses_.Count; i++){
+            if ((target - poses_[i].Translation).sqrMagnitude < tmp.sqrMagnitude){
+                tmp = target - poses_[i].Translation;
+                idx = i;
+            }
+        }
+        return idx;
     }
     public int Size
     {
@@ -213,7 +257,7 @@ public class Trajectory //: MonoBehaviour
             using (StreamReader sr = new StreamReader(path))
             {
                 string line;
-                Debug.Log("starting while loop");
+                //Debug.Log("starting while loop");
                 while((line = sr.ReadLine()) != null)
                 {
                     string[] values = line.Split(' ');
