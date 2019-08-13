@@ -17,7 +17,6 @@ public class ParticleHandler : MonoBehaviour
     void Start()
     {
         spell = GetComponent<ParticleSystem>();
-        spell.emissionRate = 500;
     }
 
     // Update is called once per frame
@@ -26,7 +25,7 @@ public class ParticleHandler : MonoBehaviour
         if (GetGrab())
         {
             hasGrabed = true;
-            spell.Stop();
+            StartParticleEffect();
         }
         else
         {
@@ -35,7 +34,7 @@ public class ParticleHandler : MonoBehaviour
                 print("Spell should have fired");
 
                 hasGrabed = false;
-                spell.Play();
+                EndParticleEffect();
             }          
         }
     }
@@ -48,5 +47,15 @@ public class ParticleHandler : MonoBehaviour
     public bool GetGrab()
     {   
         return grabAction.GetState(handType);
+    }
+
+    public void StartParticleEffect()
+    {
+        spell.Play();
+    }
+
+    public void EndParticleEffect()
+    {
+        spell.Stop();
     }
 }
